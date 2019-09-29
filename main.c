@@ -44,9 +44,9 @@ CLUA_DEF(state, "d", int)
 CLUA_DEF(myprint, "ds", int, const char*)
 CLUA_DEF(getpoint, "pd", int*, int)
 
-CLUA_DEF_VOID(myprint2, "s", const char*)
-CLUA_DEF_VOID(printpoint, "p", int*)
-CLUA_DEF_VOID(hello, "")
+CLUA_DEF(myprint2, "vs", VOID, const char*)
+CLUA_DEF(printpoint, "vp", VOID, int*)
+CLUA_DEF(hello, "v", VOID)
 
 static int load_clua(lua_State* L)
 {
