@@ -1,10 +1,11 @@
 #include "luabinding.h"
 
-#define LUA_DO_ERROR(L, fmt, ...)\
-    lua_pushfstring(L, fmt, ##__VA_ARGS__);\
+#define LUA_DO_ERROR(L, fmt, ...)                                                                  \
+    lua_pushfstring(L, fmt, ##__VA_ARGS__);                                                        \
     lua_error(L)
 
-static const char* traceback(lua_State *L) {
+static const char* traceback(lua_State* L)
+{
     lua_getfield(L, LUA_GLOBALSINDEX, "debug");
     lua_getfield(L, -1, "traceback");
     lua_pcall(L, 0, 1, 0);
@@ -17,9 +18,12 @@ int lua_get_value(lua_State* L, int index, char type, void* value)
     {
     case 'd':
     case 'u':
-        if(!lua_isnumber(L, index))
+        if(lua_isnumber(L, index))
+            *((int*)value) = (int)lua_tointeger(L, index);
+        else if(lua_isboolean(L, index))
+            *((int*)value) = lua_toboolean(L, index);
+        else
             goto fail;
-        *((int*)value) = (int)lua_tointeger(L, index);
         break;
     case 'f':
         if(!lua_isnumber(L, index))
@@ -28,9 +32,12 @@ int lua_get_value(lua_State* L, int index, char type, void* value)
         break;
     case 'D':
     case 'U':
-        if(!lua_isnumber(L, index))
+        if(lua_isnumber(L, index))
+            *((long long*)value) = lua_tointeger(L, index);
+        else if(lua_isboolean(L, index))
+            *((long long*)value) = lua_toboolean(L, index);
+        else
             goto fail;
-        *((long long*)value) = lua_tointeger(L, index);
         break;
     case 'F':
         if(!lua_isnumber(L, index))
@@ -53,8 +60,8 @@ int lua_get_value(lua_State* L, int index, char type, void* value)
     return 1;
 
 fail:
-    LUA_DO_ERROR(L, "lua_get_value failed! index=%d, c_type=%c, lua_type=\"%s\"\n %s",
-                 index, type, lua_typename(L, lua_type(L, index)), traceback(L));
+    LUA_DO_ERROR(L, "lua_get_value failed! index=%d, c_type=%c, lua_type=\"%s\"\n %s", index, type,
+                 lua_typename(L, lua_type(L, index)), traceback(L));
     return 0;
 }
 

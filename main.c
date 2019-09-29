@@ -6,6 +6,11 @@ int add(int a, int b)
     return a+b;
 }
 
+int state()
+{
+    return 0;
+}
+
 int myprint(const char* str)
 {
     return printf("myprint %s\n", str);
@@ -34,12 +39,14 @@ void hello()
     printf("hello\n");
 }
 
-CLUA_DEF(2, add, "ddd", int, int, int)
-CLUA_DEF(1, myprint, "ds", int, const char*)
-CLUA_DEF_VOID(1, myprint2, "s", const char*)
-CLUA_DEF(1, getpoint, "pd", int*, int)
-CLUA_DEF_VOID(1, printpoint, "p", int*)
-CLUA_DEF_VOID(0, hello, "")
+CLUA_DEF_VOID(myprint2, "s", const char*)
+CLUA_DEF_VOID(printpoint, "p", int*)
+CLUA_DEF_VOID(hello, "")
+
+CLUA_DEF(myprint, "ds", int, const char*)
+CLUA_DEF(getpoint, "pd", int*, int)
+CLUA_DEF(add, "ddd", int, int, int)
+CLUA_DEF(state, "d", int)
 
 static int load_clua(lua_State* L)
 {
@@ -50,6 +57,7 @@ static int load_clua(lua_State* L)
         CLUA_REG(getpoint),
         CLUA_REG(printpoint),
         CLUA_REG(hello),
+        CLUA_REG(state),
 
         {NULL, NULL}
     };

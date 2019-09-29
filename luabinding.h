@@ -68,39 +68,61 @@ int lua_set_value(lua_State* L, char type, void* value);
 
 /**
  * @brief 定义无返回值的lua接口
- * @param n 参数个数 0~5
  * @param f C函数名
  * @param fmt 参数类型列表字符串, 类型含义见 @ref lua_get_value 和 @ref lua_set_value
  * @param ... 参数类型,和 fmt 一一对应
  *
  * @note 示例
  * void myprint(const char* msg1, int count); //无返回值2参数
- * CLUA_DEF_VOID(2, myprint, "sd", const char*, int);
- *               ^     ^      ^          ^       ^
- *          参数个数   函数名  类型列表    参数1    参数2
+ * CLUA_DEF_VOID(myprint, "sd", const char*, int);
+ *                  ^      ^          ^       ^
+ *               函数名  类型列表    参数1    参数2
  */
-#define CLUA_DEF_VOID(n, f, fmt, ...)                                                              \
-    IMPL_CLUA_ATTACH(IMPL_CLUA_DEF_VOID_, n)(f, fmt, ##__VA_ARGS__)
+#define CLUA_DEF_VOID(f, fmt, ...) IMPL_CLUA_CAT(IMPL_CLUA_DEF_VOID_, PP_NARG(__VA_ARGS__))(f, fmt, ##__VA_ARGS__)
 
 /**
  * @brief 定义带返回值的lua接口
- * @param n 参数个数 0~5
  * @param f C函数名
  * @param fmt 返回值+参数类型列表字符串, 类型含义见 @ref lua_get_value 和 @ref lua_set_value
- * @param ... 返回值及参数类型,和 fmt 一一对应
+ * @param argret 返回值类型,和 fmt 第一项对应
+ * @param ... 参数类型,和 fmt 一一对应
  *
  * @note 示例
  * int myprint(const char* msg1, int count); //带返回值2参数
- * CLUA_DEF(2, myprint, "dsd", int, const char*, int);
- *          ^    ^        ^     ^      ^          ^
- *     参数个数 函数名  类型列表 返回值   参数1      参数2
+ * CLUA_DEF(myprint, "dsd", int, const char*, int);
+ *            ^        ^     ^      ^          ^
+ *          函数名  类型列表 返回值   参数1      参数2
  */
-#define CLUA_DEF(n, f, fmt, ...) IMPL_CLUA_ATTACH(IMPL_CLUA_DEF_, n)(f, fmt, ##__VA_ARGS__)
+#define CLUA_DEF(f, fmt, argret,...) IMPL_CLUA_CAT(IMPL_CLUA_DEF_, PP_NARG(__VA_ARGS__))(f, fmt, argret, ##__VA_ARGS__)
 
 /*******************
  * 实现部分
  ******************/
-#define IMPL_CLUA_ATTACH(x, y) x##y
+#define IMPL_CLUA_CAT(x, y) IMPL_CLUA_CAT_(x, y)
+#define IMPL_CLUA_CAT_(x, y) x##y
+
+#define PP_ARG_N( \
+          _1,  _2,  _3,  _4,  _5,  _6,  _7,  _8,  _9, _10, \
+         _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, \
+         _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, \
+         _31, _32, _33, _34, _35, _36, _37, _38, _39, _40, \
+         _41, _42, _43, _44, _45, _46, _47, _48, _49, _50, \
+         _51, _52, _53, _54, _55, _56, _57, _58, _59, _60, \
+         _61, _62, _63, N, ...) N
+
+#define PP_RSEQ_N()                                        \
+         62, 61, 60,                                       \
+         59, 58, 57, 56, 55, 54, 53, 52, 51, 50,           \
+         49, 48, 47, 46, 45, 44, 43, 42, 41, 40,           \
+         39, 38, 37, 36, 35, 34, 33, 32, 31, 30,           \
+         29, 28, 27, 26, 25, 24, 23, 22, 21, 20,           \
+         19, 18, 17, 16, 15, 14, 13, 12, 11, 10,           \
+          9,  8,  7,  6,  5,  4,  3,  2,  1,  0
+
+#define PP_NARG_(...)    PP_ARG_N(__VA_ARGS__)
+
+#define PP_NARG(...)     PP_NARG_(_, ##__VA_ARGS__, PP_RSEQ_N())
+
 
 #define IMPL_CLUA_DEF_VOID_0(f, fmt)                                                               \
     CLUA_DECL(f)                                                                                   \
