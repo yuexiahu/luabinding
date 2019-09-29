@@ -108,7 +108,7 @@ int lua_set_value(lua_State* L, char type, void* value);
         (void)(L);                                                                                 \
         (void)(fmt);                                                                               \
         f();                                                                                       \
-        return 1;                                                                                  \
+        return 0;                                                                                  \
     }
 
 #define IMPL_CLUA_DEF_VOID_1(f, fmt, arg1)                                                         \
@@ -118,7 +118,6 @@ int lua_set_value(lua_State* L, char type, void* value);
         if(lua_get_value(L, 1, fmt[0], &a1))                                                       \
         {                                                                                          \
             f(a1);                                                                                 \
-            return 1;                                                                              \
         }                                                                                          \
         return 0;                                                                                  \
     }
@@ -131,7 +130,6 @@ int lua_set_value(lua_State* L, char type, void* value);
         if(lua_get_value(L, 1, fmt[0], &a1) && lua_get_value(L, 2, fmt[1], &a2))                   \
         {                                                                                          \
             f(a1, a2);                                                                             \
-            return 1;                                                                              \
         }                                                                                          \
         return 0;                                                                                  \
     }
@@ -146,7 +144,6 @@ int lua_set_value(lua_State* L, char type, void* value);
            lua_get_value(L, 3, fmt[2], &a3))                                                       \
         {                                                                                          \
             f(a1, a2, a3);                                                                         \
-            return 1;                                                                              \
         }                                                                                          \
         return 0;                                                                                  \
     }
@@ -162,7 +159,6 @@ int lua_set_value(lua_State* L, char type, void* value);
            lua_get_value(L, 3, fmt[2], &a3) && lua_get_value(L, 4, fmt[4], &a4))                   \
         {                                                                                          \
             f(a1, a2, a3, a4);                                                                     \
-            return 1;                                                                              \
         }                                                                                          \
         return 0;                                                                                  \
     }
@@ -180,7 +176,6 @@ int lua_set_value(lua_State* L, char type, void* value);
            lua_get_value(L, 5, fmt[4], &a5))                                                       \
         {                                                                                          \
             f(a1, a2, a3, a4, a5);                                                                 \
-            return 1;                                                                              \
         }                                                                                          \
         return 0;                                                                                  \
     }
@@ -204,10 +199,7 @@ int lua_set_value(lua_State* L, char type, void* value);
         if(lua_get_value(L, 1, fmt[1], &a1))                                                       \
         {                                                                                          \
             ret = f(a1);                                                                           \
-            if(lua_set_value(L, fmt[0], &ret))                                                     \
-            {                                                                                      \
-                return 1;                                                                          \
-            }                                                                                      \
+            return lua_set_value(L, fmt[0], &ret);                                                 \
         }                                                                                          \
         return 0;                                                                                  \
     }
@@ -221,10 +213,7 @@ int lua_set_value(lua_State* L, char type, void* value);
         if(lua_get_value(L, 1, fmt[1], &a1) && lua_get_value(L, 2, fmt[2], &a2))                   \
         {                                                                                          \
             ret = f(a1, a2);                                                                       \
-            if(lua_set_value(L, fmt[0], &ret))                                                     \
-            {                                                                                      \
-                return 1;                                                                          \
-            }                                                                                      \
+            return lua_set_value(L, fmt[0], &ret);                                                 \
         }                                                                                          \
         return 0;                                                                                  \
     }
@@ -240,10 +229,7 @@ int lua_set_value(lua_State* L, char type, void* value);
            lua_get_value(L, 3, fmt[3], &a3))                                                       \
         {                                                                                          \
             ret = f(a1, a2, a3);                                                                   \
-            if(lua_set_value(L, fmt[0], &ret))                                                     \
-            {                                                                                      \
-                return 1;                                                                          \
-            }                                                                                      \
+            return lua_set_value(L, fmt[0], &ret);                                                 \
         }                                                                                          \
         return 0;                                                                                  \
     }
@@ -260,10 +246,7 @@ int lua_set_value(lua_State* L, char type, void* value);
            lua_get_value(L, 3, fmt[3], &a3) && lua_get_value(L, 4, fmt[4], &a4))                   \
         {                                                                                          \
             ret = f(a1, a2, a3, a4);                                                               \
-            if(lua_set_value(L, fmt[0], &ret))                                                     \
-            {                                                                                      \
-                return 1;                                                                          \
-            }                                                                                      \
+            return lua_set_value(L, fmt[0], &ret);                                                 \
         }                                                                                          \
         return 0;                                                                                  \
     }
@@ -282,10 +265,7 @@ int lua_set_value(lua_State* L, char type, void* value);
            lua_get_value(L, 5, fmt[5], &a5))                                                       \
         {                                                                                          \
             ret = f(a1, a2, a3, a4, a5);                                                           \
-            if(lua_set_value(L, fmt[0], &ret))                                                     \
-            {                                                                                      \
-                return 1;                                                                          \
-            }                                                                                      \
+            return lua_set_value(L, fmt[0], &ret);                                                 \
         }                                                                                          \
         return 0;                                                                                  \
     }
